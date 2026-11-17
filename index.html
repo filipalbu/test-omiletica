@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Omiletică – Test online și catalog</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:wght@500;700&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+:root{--bg:#ECEFF2;--sf:#fff;--ink:#1F2D3D;--mut:#5B6877;--ac:#8C2F39;--ln:#D3D9E0;--ok:#2F6B4F;--okb:#E3F1E9;--bad:#A23B3B;--badb:#F8E6E6}
+@media (prefers-color-scheme:dark){:root{--bg:#141B24;--sf:#1D2733;--ink:#E6EAEE;--mut:#9AA6B3;--ac:#E08A93;--ln:#33414F;--ok:#7CCBA0;--okb:#1D3328;--bad:#EE9A9A;--badb:#3A2326}}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;font:17px/1.55 "Source Sans 3",system-ui,sans-serif;color:var(--ink);background:var(--bg)}
+.wrap{max-width:860px;margin:0 auto;padding:28px 18px 60px}
+h1,h2,h3{font-family:Newsreader,Georgia,serif;line-height:1.2;margin:0}
+h1{font-size:2.1rem}
+h2{font-size:1.5rem;margin-bottom:12px}
+.sub{color:var(--mut);margin:6px 0 22px}
+nav{display:flex;gap:4px;border-bottom:1px solid var(--ln);margin-bottom:24px}
+nav button{background:none;border:0;border-bottom:3px solid transparent;padding:10px 16px;font:600 1rem inherit;font-family:inherit;color:var(--mut);cursor:pointer}
+nav button[aria-selected=true]{color:var(--ink);border-bottom-color:var(--ac)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:6px;padding:20px;margin-bottom:16px}
+.row{display:flex;gap:14px;flex-wrap:wrap}
+.row>label{flex:1 1 220px}
+label{display:block;font-weight:600;font-size:.95rem}
+input[type=text],textarea,select{width:100%;margin-top:4px;padding:9px 11px;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--ln);border-radius:4px}
+.btn{font:600 1rem inherit;font-family:inherit;padding:10px 18px;border-radius:4px;border:1px solid var(--ac);background:var(--ac);color:#fff;cursor:pointer}
+@media (prefers-color-scheme:dark){.btn{color:#1D2733}}
+.btn.alt{background:none;color:var(--ac)}
+.btn.sm{padding:5px 10px;font-size:.9rem}
+.acts{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.q{border:0;padding:0;margin:0 0 20px}
+.q legend{font-family:Newsreader,Georgia,serif;font-weight:700;font-size:1.15rem;padding:0;margin-bottom:8px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:8px 12px;margin:5px 0;border:1px solid var(--ln);border-radius:4px;font-weight:400;cursor:pointer;background:var(--sf)}
+.opt input{margin-top:6px}
+.opt.ok{background:var(--okb);border-color:var(--ok)}
+.opt.no{background:var(--badb);border-color:var(--bad)}
+.score{font-family:Newsreader,Georgia,serif;font-size:3.4rem;font-weight:700;color:var(--ac);line-height:1}
+.msg{color:var(--bad);font-weight:600;min-height:1.4em}
+table{width:100%;border-collapse:collapse;font-size:.97rem}
+th,td{text-align:left;padding:9px 8px;border-bottom:1px solid var(--ln)}
+th{font-weight:600;color:var(--mut)}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.tw{overflow-x:auto}
+.stats{display:flex;gap:28px;flex-wrap:wrap;margin-bottom:8px}
+.stats b{display:block;font:700 1.6rem Newsreader,Georgia,serif}
+.stats span{color:var(--mut);font-size:.9rem}
+.fail{color:var(--bad);font-weight:600}
+.small{color:var(--mut);font-size:.9rem}
+.hidden{display:none}
+@media print{nav,.acts,.noprint,h1,.sub{display:none!important}body,html{background:#fff;color:#000}.card{border:0;padding:0}.tab:not(#t-cat){display:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Omiletică: test de evaluare</h1>
+  <p class="sub">Test cu 8 întrebări și catalog automat cu note.</p>
+  <nav role="tablist" aria-label="Secțiuni">
+    <button role="tab" id="b-test" aria-selected="true">Test</button>
+    <button role="tab" id="b-q" aria-selected="false">Întrebări</button>
+    <button role="tab" id="b-cat" aria-selected="false">Catalog</button>
+  </nav>
+
+  <section id="t-test" class="tab">
+    <div class="card">
+      <div class="row">
+        <label>Nume și prenume<input type="text" id="nume" autocomplete="name"></label>
+        <label>Grupa / anul<input type="text" id="grupa"></label>
+      </div>
+    </div>
+    <form id="form" onsubmit="return false"></form>
+    <p class="msg" id="msg" role="alert"></p>
+    <div class="acts"><button class="btn" id="trimite">Trimite testul</button></div>
+    <div id="rez" class="card hidden"></div>
+  </section>
+
+  <section id="t-q" class="tab hidden">
+    <div class="card">
+      <h2>Testul activ</h2>
+      <p class="small">Cele 8 întrebări sunt alese la întâmplare din banca de mai jos. Studenții vor primi testul generat aici. Răspunsurile corecte sunt marcate.</p>
+      <div class="acts"><button class="btn" id="gen">Generează 8 întrebări noi</button></div>
+      <div id="activ"></div>
+    </div>
+    <div class="card">
+      <h2>Adaugă o întrebare în bancă</h2>
+      <label>Întrebarea<textarea id="nq" rows="2"></textarea></label>
+      <div class="row" style="margin-top:8px">
+        <label>Varianta A<input type="text" class="no0"></label>
+        <label>Varianta B<input type="text" class="no1"></label>
+        <label>Varianta C<input type="text" class="no2"></label>
+        <label>Varianta D<input type="text" class="no3"></label>
+      </div>
+      <label style="margin-top:8px;max-width:220px">Răspuns corect
+        <select id="nc"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select>
+      </label>
+      <p class="msg" id="msg2" role="alert"></p>
+      <div class="acts"><button class="btn alt" id="adauga">Adaugă în bancă</button></div>
+    </div>
+    <div class="card">
+      <h2>Banca de întrebări <span class="small" id="cnt"></span></h2>
+      <div id="banca"></div>
+    </div>
+  </section>
+
+  <section id="t-cat" class="tab hidden">
+    <div class="card">
+      <h2>Catalog – Omiletică</h2>
+      <div class="stats" id="stats"></div>
+      <div class="tw"><table><thead><tr><th class="n">Nr.</th><th>Nume</th><th>Grupa</th><th>Data</th><th class="n">Corecte</th><th class="n">Nota</th><th class="noprint"></th></tr></thead><tbody id="cat"></tbody></table></div>
+      <p class="small" id="gol"></p>
+      <div class="acts">
+        <button class="btn" id="csv">Exportă CSV</button>
+        <button class="btn alt" id="print">Tipărește</button>
+        <button class="btn alt" id="clear">Șterge tot catalogul</button>
+      </div>
+      <p class="small noprint">Nota = 1 punct din oficiu + 9 puncte repartizate egal pe cele 8 întrebări. Promovare: minimum 5.</p>
+    </div>
+  </section>
+</div>
+
+<script>
+const BANK=[
+{q:"Ce studiază omiletica?",o:["Istoria Bisericii","Știința despre predica creștină și arta de a o alcătui și rosti","Interpretarea textelor biblice în limbile originale","Rânduiala slujbelor liturgice"],a:1},
+{q:"De la ce cuvânt grecesc provine termenul „omilie”?",o:["homilia (adunare, convorbire)","logos (cuvânt)","kerygma (vestire)","didache (învățătură)"],a:0},
+{q:"Care sunt părțile principale ale unei predici?",o:["Prolog, epilog și epistolă","Introducere, cuprins și încheiere","Tema, rima și refrenul","Rugăciune, citire și binecuvântare"],a:1},
+{q:"Ce este omilia, ca specie a predicii?",o:["Lauda adusă unui sfânt la praznicul lui","Tâlcuirea unei pericope biblice, de obicei pe rând, după text","Cuvântul rostit la înmormântare","Predica rostită doar în timpul postului"],a:1},
+{q:"Ce este panegiricul?",o:["Predica pe o temă morală generală","Tâlcuirea unui verset izolat","Predica ținută la sărbătoarea unui sfânt sau a unui praznic, în care este lăudat sfântul sau este explicat evenimentul","Predica de învățătură pentru copii"],a:2},
+{q:"Cine este considerat cel mai mare predicator al Bisericii creștine?",o:["Sfântul Ioan Gură de Aur","Sfântul Ambrozie","Fericitul Augustin","Sfântul Maxim Mărturisitorul"],a:0},
+{q:"Care este modelul desăvârșit al predicii creștine?",o:["Predica Mântuitorului Hristos de pe Munte","Predica unui retor antic","Scrierile filosofilor greci","Predica de la sinoadele ecumenice"],a:0},
+{q:"Cine a rostit prima predică creștină după Pogorârea Duhului Sfânt?",o:["Sfântul Apostol Pavel","Sfântul Apostol Petru","Sfântul Ștefan","Sfântul Apostol Iacov"],a:1},
+{q:"Care este scopul principal al predicii?",o:["Etalarea cunoștințelor predicatorului","Distracția ascultătorilor","Mântuirea credincioșilor prin îndrumarea lor spre credință și viață creștină","Criticarea celor absenți de la slujbă"],a:2},
+{q:"Care dintre părțile retoricii clasice se referă la rostirea predicii (voce, gestică, atitudine)?",o:["Inventio","Dispositio","Memoria","Actio"],a:3},
+{q:"Ce este exordiul?",o:["Încheierea predicii","Introducerea predicii","Corpul de argumente","Citatul biblic final"],a:1},
+{q:"Care este rolul încheierii unei predici?",o:["Să repete integral predica","Să introducă o temă nouă","Să rezume ideea centrală și să îndemne la aplicarea ei practică","Să anunțe programul parohiei"],a:2},
+{q:"Ce înseamnă unitatea predicii?",o:["Durata de un singur minut","Folosirea unei singure surse","Subordonarea întregului conținut unei singure idei centrale (teme)","Rostirea ei de un singur predicator"],a:2},
+{q:"Care Sfânt Părinte este autorul Omiliilor la Hexaemeron (Șase zile)?",o:["Sfântul Vasile cel Mare","Sfântul Ioan Damaschin","Sfântul Atanasie cel Mare","Sfântul Chiril al Alexandriei"],a:0},
+{q:"Ce caracterizează predica tematică, spre deosebire de omilie?",o:["Pornește de la o temă aleasă și o dezvoltă, nu de la tâlcuirea textului pe rând","Nu folosește deloc Sfânta Scriptură","Se rostește numai la sărbători","Este lipsită de introducere"],a:0},
+{q:"Care dintre calitățile de mai jos este esențială pentru limbajul predicii?",o:["Cuvintele rare și greu de înțeles","Claritatea și accesibilitatea pentru ascultători","Termenii tehnici fără explicații","Ironia față de ascultători"],a:1}
+];
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const mem={};
+const load=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):(mem[k]??d)}catch(e){return mem[k]??d}};
+const save=(k,v)=>{mem[k]=v;try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const L="ABCD";
+const fmt=n=>n.toFixed(2).replace('.',',');
+const grade=c=>1+9*c/8;
+
+const custom=()=>load('omi_custom',[]);
+const all=()=>BANK.map((b,i)=>({...b,id:'b'+i})).concat(custom());
+const byId=id=>all().find(x=>x.id===id);
+function genTest(){
+  const a=all().slice();
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
+  save('omi_test',a.slice(0,8).map(x=>x.id));
+}
+function activ(){
+  let ids=load('omi_test',[]).filter(byId);
+  if(ids.length<Math.min(8,all().length)){genTest();ids=load('omi_test',[])}
+  return ids.map(byId);
+}
+
+/* Navigare */
+function show(t){
+  ['test','q','cat'].forEach(k=>{
+    $('#t-'+k).classList.toggle('hidden',k!==t);
+    $('#b-'+k).setAttribute('aria-selected',k===t);
+  });
+  if(t==='q')renderQ();
+  if(t==='cat')renderCat();
+}
+['test','q','cat'].forEach(k=>$('#b-'+k).onclick=()=>show(k));
+
+/* Test */
+let test=[];
+function renderTest(){
+  test=activ();
+  $('#form').innerHTML=test.map((q,i)=>`<fieldset class="card q"><legend>${i+1}. ${esc(q.q)}</legend>`+
+    q.o.map((o,j)=>`<label class="opt"><input type="radio" name="q${i}" value="${j}"> <span>${L[j]}. ${esc(o)}</span></label>`).join('')+`</fieldset>`).join('');
+  $('#rez').classList.add('hidden');
+  $('#trimite').disabled=false;
+  $('#msg').textContent='';
+}
+$('#trimite').onclick=()=>{
+  const nume=$('#nume').value.trim(), grupa=$('#grupa').value.trim();
+  if(!nume){$('#msg').textContent='Completează numele și prenumele.';$('#nume').focus();return}
+  const ans=test.map((q,i)=>{const r=document.querySelector(`input[name=q${i}]:checked`);return r?+r.value:-1});
+  const lipsa=ans.findIndex(a=>a<0);
+  if(lipsa>=0){$('#msg').textContent=`Nu ai răspuns la întrebarea ${lipsa+1}.`;return}
+  $('#msg').textContent='';
+  const c=ans.filter((a,i)=>a===test[i].a).length;
+  const nota=grade(c);
+  const cat=load('omi_cat',[]);
+  cat.push({nume,grupa,data:new Date().toLocaleString('ro-RO',{dateStyle:'short',timeStyle:'short'}),c,nota});
+  save('omi_cat',cat);
+  $$('#form fieldset').forEach((fs,i)=>{
+    fs.querySelectorAll('.opt').forEach((l,j)=>{
+      l.querySelector('input').disabled=true;
+      if(j===test[i].a)l.classList.add('ok');
+      else if(j===ans[i])l.classList.add('no');
+    });
+  });
+  $('#trimite').disabled=true;
+  const r=$('#rez');
+  r.classList.remove('hidden');
+  r.innerHTML=`<div class="score">${fmt(nota)}</div><p><b>${esc(nume)}</b>: ${c} din 8 răspunsuri corecte. ${nota>=5?'Test promovat.':'Test nepromovat.'}</p>
+    <p class="small">Răspunsurile corecte sunt marcate cu verde, cele greșite cu roșu. Nota a fost adăugată în catalog.</p>
+    <div class="acts"><button class="btn" id="nou">Student nou</button></div>`;
+  r.scrollIntoView({behavior:'smooth',block:'start'});
+  $('#nou').onclick=()=>{$('#nume').value='';$('#grupa').value='';renderTest();window.scrollTo(0,0)};
+};
+
+/* Întrebări */
+function renderQ(){
+  $('#activ').innerHTML=activ().map((q,i)=>`<p><b>${i+1}. ${esc(q.q)}</b><br>`+
+    q.o.map((o,j)=>j===q.a?`<span style="color:var(--ok);font-weight:600">${L[j]}. ${esc(o)} (corect)</span>`:`${L[j]}. ${esc(o)}`).join('<br>')+`</p>`).join('');
+  const cs=custom();
+  $('#cnt').textContent=`(${all().length} întrebări)`;
+  $('#banca').innerHTML=all().map((q,i)=>`<div style="display:flex;gap:10px;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--ln)">
+    <span>${i+1}. ${esc(q.q)}</span>${q.id[0]==='c'?`<button class="btn alt sm" data-del="${q.id}">Șterge</button>`:''}</div>`).join('');
+  $$('[data-del]').forEach(b=>b.onclick=()=>{
+    save('omi_custom',cs.filter(x=>x.id!==b.dataset.del));
+    save('omi_test',load('omi_test',[]).filter(x=>x!==b.dataset.del));
+    renderQ();renderTest();
+  });
+}
+$('#gen').onclick=()=>{
+  if(load('omi_cat',[]).length&&!confirm('Testul nou va înlocui testul activ. Notele din catalog rămân. Continui?'))return;
+  genTest();renderQ();renderTest();
+};
+$('#adauga').onclick=()=>{
+  const q=$('#nq').value.trim(), o=[0,1,2,3].map(i=>$('.no'+i).value.trim());
+  if(!q||o.some(x=>!x)){$('#msg2').textContent='Completează întrebarea și toate cele 4 variante.';return}
+  $('#msg2').textContent='';
+  const cs=custom();cs.push({id:'c'+Date.now(),q,o,a:+$('#nc').value});
+  save('omi_custom',cs);
+  $('#nq').value='';[0,1,2,3].forEach(i=>$('.no'+i).value='');
+  renderQ();
+};
+
+/* Catalog */
+function renderCat(){
+  const cat=load('omi_cat',[]).slice().sort((a,b)=>a.nume.localeCompare(b.nume,'ro'));
+  $('#cat').innerHTML=cat.map((r,i)=>`<tr><td class="n">${i+1}</td><td>${esc(r.nume)}</td><td>${esc(r.grupa)}</td><td>${esc(r.data)}</td><td class="n">${r.c}/8</td><td class="n ${r.nota<5?'fail':''}"><b>${fmt(r.nota)}</b></td><td class="noprint"><button class="btn alt sm" data-rm="${r.data}|${esc(r.nume)}">Șterge</button></td></tr>`).join('');
+  const n=cat.length, m=n?cat.reduce((s,r)=>s+r.nota,0)/n:0, p=cat.filter(r=>r.nota>=5).length;
+  $('#stats').innerHTML=`<div><b>${n}</b><span>participanți</span></div><div><b>${n?fmt(m):'–'}</b><span>media clasei</span></div><div><b>${p}</b><span>promovați</span></div><div><b>${n-p}</b><span>nepromovați</span></div>`;
+  $('#gol').textContent=n?'':'Catalogul este gol. Notele apar aici după ce un student trimite testul.';
+  $$('[data-rm]').forEach(b=>b.onclick=()=>{
+    const [d,...nm]=b.dataset.rm.split('|');const name=nm.join('|');
+    const all=load('omi_cat',[]);const i=all.findIndex(r=>r.data===d&&esc(r.nume)===name);
+    if(i>=0&&confirm('Ștergi această notă din catalog?')){all.splice(i,1);save('omi_cat',all);renderCat()}
+  });
+}
+$('#csv').onclick=()=>{
+  const cat=load('omi_cat',[]).slice().sort((a,b)=>a.nume.localeCompare(b.nume,'ro'));
+  const q=s=>'"'+String(s).replace(/"/g,'""')+'"';
+  const rows=[['Nr.','Nume','Grupa','Data','Corecte','Nota'].join(';')].concat(cat.map((r,i)=>[i+1,q(r.nume),q(r.grupa),q(r.data),r.c+'/8',fmt(r.nota)].join(';')));
+  const blob=new Blob(['\ufeff'+rows.join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='catalog-omiletica.csv';a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+};
+$('#print').onclick=()=>window.print();
+$('#clear').onclick=()=>{if(confirm('Ștergi definitiv toate notele din catalog?')){save('omi_cat',[]);renderCat()}};
+
+renderTest();
+</script>
+</body>
+</html>
